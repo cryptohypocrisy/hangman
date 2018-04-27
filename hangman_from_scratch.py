@@ -12,6 +12,7 @@ def main():
     word = get_word(word_list)
     print("Play The", add_spaces("HANGMAN"), "Game!")
     play_game(word)
+    
 
 
 def create_wordlist():
@@ -56,12 +57,16 @@ def play_game(word):
     tried_list = []
     guesses = 0
     wrong = 0
-    letter_index = 0
+    i = 1
     word_line_list = ["_"] * len(word)
 
     while True:
+        letter_index = 0
+
         draw_screen(word, tried_list, guesses, wrong, word_line_list, letter="")
+
         letter = get_letter(tried_list)
+
         if letter in tried_list:
             print("You already guessed that, try again.")
             continue
@@ -69,22 +74,22 @@ def play_game(word):
             wrong += 1
         else:
             if word.count(letter) > 1:
-                while i < word.count(letter):
-                    letter_index = word.find(letter, letter_index)
+                while i <= word.count(letter):
+                    letter_index = word.find(letter, letter_index+1)
                     word_line_list.pop(letter_index)
                     word_line_list.insert(letter_index, letter)
+                    i += 1
             else:
                 letter_index = word.find(letter)
                 word_line_list.pop(letter_index)
                 word_line_list.insert(letter_index, letter)
-                    
-        
-            
+       
         tried_list.append(letter)
         guesses += 1
 
 
 def draw_screen(word, tried_list, guesses, wrong, word_line_list, letter):
+   
     tried = ""
     for letter in tried_list:
         tried += (letter.upper() + " ")
@@ -96,6 +101,8 @@ def draw_screen(word, tried_list, guesses, wrong, word_line_list, letter):
         i += 1
             
     print("{:>15} {:<3} {:>5} {:<3} {:>5} {:<3}".format("Guesses:", guesses, "Wrong:", wrong, "Tried:", tried))
+
+    
 
 
 if __name__ == "__main__":
