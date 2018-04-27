@@ -57,11 +57,12 @@ def play_game(word):
     tried_list = []
     guesses = 0
     wrong = 0
-    i = 1
+    i = 0
     word_line_list = ["_"] * len(word)
 
-    while True:
+    while "_" in word_line_list:
         letter_index = 0
+        i = 0
 
         draw_screen(word, tried_list, guesses, wrong, word_line_list, letter="")
 
@@ -74,8 +75,8 @@ def play_game(word):
             wrong += 1
         else:
             if word.count(letter) > 1:
-                while i <= word.count(letter):
-                    letter_index = word.find(letter, letter_index+1)
+                while i < word.count(letter):
+                    letter_index = word.find(letter, letter_index+i)
                     word_line_list.pop(letter_index)
                     word_line_list.insert(letter_index, letter)
                     i += 1
@@ -87,6 +88,7 @@ def play_game(word):
         tried_list.append(letter)
         guesses += 1
 
+    print("\nYou guessed it in", guesses, "tries.")
 
 def draw_screen(word, tried_list, guesses, wrong, word_line_list, letter):
    
