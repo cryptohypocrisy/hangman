@@ -12,7 +12,7 @@ def main():
         word_list = create_wordlist()
         word = get_word(word_list)
         print("\nPlay The", add_spaces("HANGMAN"), "Game\n")
-        print("After 10 wrong guesses, the game is OVER, good luck!\n")
+        print("After 7 wrong guesses, the game is OVER.  GOOD LUCK!\n")
         play_game(word)
         choice = input("\nPlay again? [y/n] ")
         if choice.lower() == 'y':
@@ -33,7 +33,7 @@ def create_wordlist():
             with open(file_path) as file:
                 for line in file:
                     if line != "\n":
-                        word = line.lower()
+                        word = line.upper()
                         word_list.append(word.replace("\n", ""))
 
         except FileNotFoundError:
@@ -52,7 +52,7 @@ def get_letter():
     while True:
         letter = input("\nEnter a letter: ")
         if len(letter) == 1 and letter.isalpha():
-            return letter
+            return letter.upper()
         else:
             print("That's not a letter, try again.")
 
@@ -68,14 +68,14 @@ def play_game(word):
     wrong = 0
     word_line_list = ["_"] * len(word)
     char_list = ["_____", "|", "O", "\\", "|", "/", "|", "/", "\\"]
-    mod_char_list = ([" "] * 10)
+    draw_list = ([" "] * 10)
     is_wrong = False
 
-    while wrong < 10:
+    while wrong < 7:
         letter_index = 0
         i = 0
 
-        draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list)
+        draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, draw_list)
 
         letter = get_letter()
 
@@ -102,17 +102,17 @@ def play_game(word):
         tried += letter
         guesses += 1
 
-        if wrong > 9 and "_" in word_line_list:
-            draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list)
-            print("\nTHE WORD WAS:  ", word)
+        if wrong > 6 and "_" in word_line_list:
+            draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, draw_list)
+            print("\n\nTHE WORD WAS:  ", word.upper())
         elif "_" not in word_line_list:
-            draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list)
-            print("\nYou guessed it in", guesses, "tries.")
+            draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, draw_list)
+            print("\n*WINNER WINNER*\nYou guessed it in", guesses, "tries.")
             break
 
 
-def draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list):
-    draw_hangman(guesses, wrong, is_wrong, char_list, mod_char_list)
+def draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, draw_list):
+    draw_hangman(guesses, wrong, is_wrong, char_list, draw_list)
 
     print("-" * 72)
 
@@ -125,29 +125,26 @@ def draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list
                                                         add_spaces(tried)))
 
 
-def draw_hangman(guesses, wrong, is_wrong, char_list, mod_char_list):
-    if is_wrong and wrong < 10:
-        mod_char_list.insert(wrong - 1, char_list[wrong - 1])
+def draw_hangman(guesses, wrong, is_wrong, char_list, draw_list):
+    if is_wrong and wrong <= 7:
+        draw_list.insert(wrong + 1, char_list[wrong + 1])
 
     if guesses == 0:
-        mod_char_list = char_list
+        draw_list = char_list
+    elif wrong == 7:
+        draw_list[2] = "{}\n     {}\n     {}\n     {}".format("|", "|", "|", "X")
 
     # use string format method to properly display the hangman pieces
-    hangman = "{}\n     {}\n     {}\n    {}{}{}\n     {}\n     {}{}".format(mod_char_list[0], mod_char_list[1],
-                                                                              mod_char_list[2], mod_char_list[3],
-                                                                              mod_char_list[4], mod_char_list[5],
-                                                                              mod_char_list[6], mod_char_list[7],
-                                                                              mod_char_list[8])
-
-    if wrong < 10:
+    hangman = "{}\n     {}\n     {}\n    {}{}{}\n     {}\n     {}{}".format(char_list[0], char_list[1],
+                                                                              draw_list[2], draw_list[3],
+                                                                              draw_list[4], draw_list[5],
+                                                                              draw_list[6], draw_list[7],
+                                                                              draw_list[8])
+    if wrong < 7:
         print(hangman)
     else:
-        print()
-        print("X   X".center(24))
-        print("_____".center(24))
-        print()
-        print("YOU'RE DEAD".center(24))
-        print()
+        print(hangman)
+        print("\n  {}\n\n".format("*UR DEAD*"))
 
 
 if __name__ == "__main__":
