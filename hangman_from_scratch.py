@@ -11,9 +11,10 @@ def main():
     while True:
         word_list = create_wordlist()
         word = get_word(word_list)
-        print("\nPlay The", add_spaces("HANGMAN"), "Game!")
+        print("\nPlay The", add_spaces("HANGMAN"), "Game\n")
+        print("After 10 wrong guesses, the game is OVER, good luck!\n")
         play_game(word)
-        choice = input("Play again? [y/n] ")
+        choice = input("\nPlay again? [y/n] ")
         if choice.lower() == 'y':
             print("Choice =", choice.lower())
             continue
@@ -57,37 +58,36 @@ def get_letter():
 
 
 def add_spaces(word):
-    spaced_word = " ".join(word)
+    spaced_word = " ".join(word.upper())
     return spaced_word
 
 
 def play_game(word):
-    tried_list = []
+    tried = ""
     guesses = 0
     wrong = 0
-    i = 0
     word_line_list = ["_"] * len(word)
     char_list = ["_____", "|", "O", "\\", "|", "/", "|", "/", "\\"]
     mod_char_list = ([" "] * 10)
-    guess_wrong = False
+    is_wrong = False
 
     while wrong < 10:
         letter_index = 0
         i = 0
 
-        draw_screen(word, guess_wrong, tried_list, guesses, wrong, word_line_list, char_list, mod_char_list, letter="")
+        draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list)
 
         letter = get_letter()
 
-        if letter in tried_list:
+        if letter in tried:
             print("You already guessed that, try again.")
-            guess_wrong = False
+            is_wrong = False
             continue
         elif letter not in word:
             wrong += 1
-            guess_wrong = True
+            is_wrong = True
         else:
-            guess_wrong = False
+            is_wrong = False
             if word.count(letter) > 1:
                 while i < word.count(letter):
                     letter_index = word.find(letter, letter_index + i)
@@ -99,44 +99,40 @@ def play_game(word):
                 word_line_list.pop(letter_index)
                 word_line_list.insert(letter_index, letter)
 
-        tried_list.append(letter)
+        tried += letter
         guesses += 1
+
         if wrong > 9 and "_" in word_line_list:
-            draw_screen(word, guess_wrong, tried_list, guesses, wrong, word_line_list, char_list, mod_char_list, letter="")
+            draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list)
             print("\nTHE WORD WAS:  ", word)
         elif "_" not in word_line_list:
-            draw_screen(word, guess_wrong, tried_list, guesses, wrong, word_line_list, char_list, mod_char_list, letter="")
+            draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list)
             print("\nYou guessed it in", guesses, "tries.")
             break
 
 
-def draw_screen(word, guess_wrong, tried_list, guesses, wrong, word_line_list, char_list, mod_char_list, letter):
-    tried = ""
-    for letter in tried_list:
-        tried += (letter.upper() + " ")
+def draw_screen(word, is_wrong, tried, guesses, wrong, word_line_list, char_list, mod_char_list):
+    draw_hangman(guesses, wrong, is_wrong, char_list, mod_char_list)
 
-    draw_hangman(guesses, wrong, guess_wrong, char_list, mod_char_list)
-
-    print("-" * 64)
+    print("-" * 72)
 
     i = 0
     while i < (len(word)):
         print(word_line_list[i], end=" ")
         i += 1
 
-    print("{:>15} {:<3} {:>5} {:<3} {:>5} {:<3}".format("Guesses:", guesses, "Wrong:", wrong, "Tried:", tried))
+    print("{:>15} {:<3} {:>5} {:<3} {:>5} {:<3}".format("Guesses:", guesses, "Wrong:", wrong, "Tried:",
+                                                        add_spaces(tried)))
 
 
-def draw_hangman(guesses, wrong, guess_wrong, char_list, mod_char_list):
-    if guess_wrong:
-        try:
-            mod_char_list.insert(wrong - 1, char_list[wrong - 1])
-        except IndexError:
-            pass
+def draw_hangman(guesses, wrong, is_wrong, char_list, mod_char_list):
+    if is_wrong and wrong < 10:
+        mod_char_list.insert(wrong - 1, char_list[wrong - 1])
 
     if guesses == 0:
         mod_char_list = char_list
 
+    # use string format method to properly display the hangman pieces
     hangman = "{}\n     {}\n     {}\n    {}{}{}\n     {}\n     {}{}".format(mod_char_list[0], mod_char_list[1],
                                                                               mod_char_list[2], mod_char_list[3],
                                                                               mod_char_list[4], mod_char_list[5],
