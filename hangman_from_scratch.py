@@ -5,7 +5,6 @@
 
 import sys
 import random
-import copy as c
 
 
 def main():
@@ -48,7 +47,7 @@ def get_word(word_list):
     return word
 
 
-def get_letter(tried_list):
+def get_letter():
     while True:
         letter = input("\nEnter a letter: ")
         if len(letter) == 1 and letter.isalpha():
@@ -78,7 +77,7 @@ def play_game(word):
 
         draw_screen(word, guess_wrong, tried_list, guesses, wrong, word_line_list, char_list, mod_char_list, letter="")
 
-        letter = get_letter(tried_list)
+        letter = get_letter()
 
         if letter in tried_list:
             print("You already guessed that, try again.")
@@ -104,7 +103,7 @@ def play_game(word):
         guesses += 1
         if wrong > 9 and "_" in word_line_list:
             draw_screen(word, guess_wrong, tried_list, guesses, wrong, word_line_list, char_list, mod_char_list, letter="")
-            print("\nYOU LOSE\n\nTHE WORD WAS:\t", word)
+            print("\nTHE WORD WAS:  ", word)
         elif "_" not in word_line_list:
             draw_screen(word, guess_wrong, tried_list, guesses, wrong, word_line_list, char_list, mod_char_list, letter="")
             print("\nYou guessed it in", guesses, "tries.")
@@ -144,7 +143,15 @@ def draw_hangman(guesses, wrong, guess_wrong, char_list, mod_char_list):
                                                                               mod_char_list[6], mod_char_list[7],
                                                                               mod_char_list[8])
 
-    print(hangman)
+    if wrong < 10:
+        print(hangman)
+    else:
+        print()
+        print("X   X".center(24))
+        print("_____".center(24))
+        print()
+        print("YOU'RE DEAD".center(24))
+        print()
 
 
 if __name__ == "__main__":
