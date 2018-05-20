@@ -1,3 +1,3 @@
 # hangman
 
-simple hangman game
+simple hangman game with graphics
